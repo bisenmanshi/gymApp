@@ -7,6 +7,7 @@ const app =express()
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const cron = require('node-cron');
+require("dotenv").config();
 
 app.use(cors())
 app.use(cookieParser());
@@ -29,58 +30,7 @@ db.connect(function(err) {
 app.get('/',(req,res)=>{
     return res.json("backend side");
 })
-//CRUD operation for enquiry table
-// app.post('/addEnquiry', (req, res) => {
-//     const { EnquiryId,FirstName,LastName, contact, email, age, gender } = req.body;
-  
-//     const sql = 'INSERT INTO enquiry (EnquiryId,FirstName,LastName, contact, email, age, gender) VALUES (?,?,?, ?, ?, ?, ?)';
-//     const values = [EnquiryId,FirstName,LastName, contact, email, age, gender];
-  
-//     db.query(sql, values, (err) => {
-//       if (err) {
-//         console.log(err);
-//         return res.status(500).json({ error: 'An error occurred while creating the enquiry.' });
-//       }
-  
-//       return res.status(200).json({ message: 'Enquiry added successfully.' });
-//     });
-//   });
-//   app.get('/getEnquiry/:id',(req,res)=>{
-//       const id=req.params.id;
-//       const sql="SELECT*FROM enquiry WHERE EnquiryId=?";
-//       db.query(sql,[id],(err,result)=>{
-//         if(err) return res.json({Error:"Get enquiry error in sql"});
-//         return res.json({Status:"Success",Result:result})
-//       })
-//   })
-//   app.get('/getEnquiry',(req,res)=>{
-//      const sql="SELECT*FROM enquiry";
-//      db.query(sql,(err,result)=>{
-//         if(err) return res.json({Error:"Get enquiry error in sql"});
-//         return res.json({Status:"Success",Result:result})
-//      })
-//   }) 
-//   app.put('/updateEnquiry/:id',(req,res)=>{
-//     const id=req.params.id;
-//     const {FirstName,LastName,contact,email,age,gender}=req.body;
-//     const sql="UPDATE enquiry SET FirstName=?,LastName=?,contact=?,email=?,age=?,gender=? WHERE EnquiryId=?";
-//     const params =[FirstName,LastName,contact,email,age,gender,id];
-//     db.query(sql,params,(err,result)=>{
-//         if(err){
-//             console.log(err);
-//             return res.json({Error:"Update enquiry error in Sql"});
-//         }
-//         return res.json({Status:"Success",Result:result});
-//     });
-//   });
-//   app.delete('/deleteEnquiry/:id',(req,res)=>{
-//     const id=req.params.id;
-//     const sql='Delete FROM enquiry WHERE EnquiryId=?';
-//     db.query(sql,[id],(err)=>{
-//         if(err) return res.json({Error:"Update enquiry error in sql"});
-//         return res.json({Status:"Success"})
-//     })
-//   })
+
 
 app.post('/addEnquiry', (req, res) => {
   const { EnquiryId, FirstName, LastName, contact, email, age, gender,status = 'Pending' } = req.body;
@@ -106,23 +56,8 @@ app.get('/getEnquiry/:id', (req, res) => {
   });
 });
 
-// app.get('/getEnquiry', (req, res) => {
-//   const { search } = req.query;
-//   let sql = "SELECT * FROM enquiry";
-//   let params = [];
 
-//     if (search) {
-//         sql += " WHERE FirstName LIKE ? OR LastName LIKE ? OR contact LIKE ? OR email LIKE ?";
-//         const searchQuery = `%${search}%`;
-//         params = [searchQuery, searchQuery, searchQuery, searchQuery];
-//     }
-//   db.query(sql, (err, result) => {
-//       if (err) return res.json({ Error: "Get enquiry error in SQL" });
-//       return res.json({ Status: "Success", Result: result });
-//   });
-// });
-
-app.get('/getEnquiry', (req, res) => {
+app.get('/getEnquiry', (req, res) => {b 
   const { page = 1, limit = 10, search, status } = req.query;
   let sql = 'SELECT * FROM enquiry WHERE 1=1';
 
@@ -160,18 +95,7 @@ app.put('/updateEnquiry/:id', (req, res) => {
   });
 });
 
-// app.put('/updateEnquiryStatus/:id', (req, res) => {
-//   const id = req.params.id;
-//   const { status } = req.body;
-//   const sql = "UPDATE enquiry SET Status = ? WHERE EnquiryId = ?";
-//   db.query(sql, [status, id], (err, result) => {
-//       if (err) {
-//           console.error('Error updating enquiry status:', err);
-//           return res.status(500).json({ error: 'An error occurred while updating enquiry status.' });
-//       }
-//       return res.status(200).json({ status: 'Success', message: 'Enquiry status updated successfully.' });
-//   });
-// });
+
 
 app.put('/updateEnquiryStatus/:id', (req, res) => {
   const id = req.params.id;
@@ -200,57 +124,7 @@ app.delete('/deleteEnquiry/:id', (req, res) => {
 });
 
 
-  //CRUD Operation for Plan table
-//   app.post('/addPlan',(req,res)=>{
-//     const {PlanId,PlanName,amount,duration}=req.body;
-//     const sql='INSERT INTO plan (PlanId,PlanName,amount,duration) VALUES (?,?,?,?)';
-//     const values=[PlanId,PlanName,amount,duration];
-//     db.query(sql,values,(err)=>{
-//         if(err){
-//             console.log(err);
-//             return res.status(500).json({error:'An error occured while creating the enquiry'});
-//         }
-//         return res.status(200).json({messafe:'Plan added successfully'});
-//     });
-//   });
-//   app.get('/getPlan/:id',(req,res)=>{
-//     const id=req.params.id;
-//     const sql="SELECT *FROM plan where PlanId =?";
-//     db.query(sql,[id],(err,result)=>{
-//       if(err) return res.json({Error:"Get plan error in sql"});
-//       return res.json({Status: "Success",Result:result})
-//     })
-//   })
-//   app.put('/updatePlan/:id', (req, res) => {
-//     const id = req.params.id;
-//     const { PlanName, amount, duration } = req.body;
-//     const sql = "UPDATE plan SET PlanName = ?, amount = ?, duration = ? WHERE PlanId = ?";
-//     const params = [PlanName, amount, duration, id];
-//     db.query(sql, params, (err, result) => {
-//       if (err) {
-//         console.log(err);
-//         return res.json({ Error: "Update plan error in SQL" });
-//       }
-//       return res.json({ Status: "Success" });
-//     });
-//   });
-
-// app.get('/getPlan', (req, res) => {
-//     const sql = "Select * FROM Plan";
-//     db.query(sql, (err, result) => {
-//         if(err) return res.json({Error: "Get enquiry error in sql"});
-//         return res.json({Status: "Success", Result: result})
-//     })
-// })
-
-// app.delete('/deletePlan/:id', (req, res) => {
-//     const id = req.params.id;
-//     const sql = "Delete FROM plan WHERE PlanId = ?";
-//     db.query(sql, [id], (err, result) => {
-//         if(err) return res.json({Error: "Update plan error in sql"});
-//         return res.json({Status: "Success"})
-//     })
-// })
+  
 app.post('/addPlan', (req, res) => {
   const { PlanName, amount, duration, AccessLevel, SpecialPromotions } = req.body;
 
@@ -664,21 +538,7 @@ app.get('/getAttendance/:MemberId', (req, res) => {
   });
 });
 
-// app.get('/getAttendance/:MemberId', async (req, res) => {
-//   try {
-//       const { MemberId } = req.params;
-//       const [results] = await db.query('SELECT * FROM attendance WHERE MemberId = ?', [MemberId]);
-      
-//       if (!results.length) {
-//           return res.status(404).json({ message: 'No attendance records found' });
-//       }
 
-//       res.json({ attendanceRecords: results });
-//   } catch (error) {
-//       console.error('Error fetching attendance records:', error);
-//       res.status(500).json({ error: 'Error fetching attendance records' });
-//   }
-// });
 
 
 app.get('/getAllAttendance', (req, res) => {
@@ -784,8 +644,8 @@ let transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: 'bisenmanshi94@gmail.com',
-    pass: 'izyd daql zuat dikl'
+    user: process.env.MAIL_USER, 
+    pass: process.env.MAIL_PASS,
   }
 });
 
@@ -800,7 +660,7 @@ app.post('/api/contact', (req, res) => {
     }
     let mailOptions = {
       from: `${email}`,
-      to: 'bisenmanshi94@gmail.com',
+      to: process.env.MAIL_USER,
       subject: 'New Contact Form Submission',
       text: `You have a new contact form submission:\n\nFirstName: ${FirstName}\nLastName: ${LastName}\nEmail: ${email}\nMobile: ${mobile_no}\nMessage: ${message}`,
       html: `<p>You have a new contact form submission:</p><p><strong>FirstName:</strong> ${FirstName}</p><p><strong>LastName:</strong> ${LastName}</p><p><strong>Email:</strong> ${email}</p><p><strong>Mobile:</strong> ${mobile_no}</p><p><strong>Message:</strong> ${message}</p>`
